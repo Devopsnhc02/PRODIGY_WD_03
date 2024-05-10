@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tic-Tac-Toe Game</title>
+    <style>
+        /* CSS for a modern and visually appealing tic-tac-toe game */
+        body {
+            background-color: #f7f9fc;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #game {
+            text-align: center;
+            width: 400px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #2b2b2b;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 120px);
+            grid-template-rows: repeat(3, 120px);
+            gap: 10px;
+            border-radius: 10px;
+        }
+
+        .cell {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #2b2b2b;
+            font-size: 48px;
+            color: #2b2b2b;
+            background-color: #ffffff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .cell:hover {
+            background-color: #e6f7ff;
+            transform: scale(1.05);
+        }
+
+        #resetButton {
+            padding: 12px 24px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        #resetButton:hover {
+            background-color: #0056b3;
+        }
+
+        #message {
+            margin-top: 10px;
+            font-size: 20px;
+            color: #2b2b2b;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game">
+        <h1>Tic-Tac-Toe</h1>
+        <div id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <button id="resetButton">Reset Game</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        // Variables
+        const board = document.getElementById('board');
+        const cells = Array.from(document.querySelectorAll('.cell'));
+        let currentPlayer = 'X';
+        let gameActive = true;
+
+        // Winning combinations
+        const winningCombinations = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        // Handle cell click event
+        function handleClick(event) {
+            const cell = event.target;
+            const index = parseInt(cell.dataset.index, 10);
+
+            // Ignore clicks if the cell is already marked or if the game is not active
+            if (cell.textContent !== '' || !gameActive) {
+                return;
+            }
+
+            // Mark the cell with the current player's symbol
+            cell.textContent = currentPlayer;
+            cell.style.color = currentPlayer === 'X' ? '#ff6f61' : '#4a90e2'; // Use different colors for X and O
+
+            // Check if the current player has won
+            if (checkWin()) {
+                alert(currentPlayer + ' wins!');
+                gameActive = false;
+                document.getElementById('message').textContent = currentPlayer + ' wins!';
+                return;
+            }
+
+            // Check if the board is full (resulting in a draw)
+            if (cells.every(cell => cell.textContent !== '')) {
+                alert('It\'s a draw!');
+                gameActive = false;
+                document.getElementByjson('message').textContent = "It's a draw!";
+                return;
+            }
+
+            // Toggle between players
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+
+        // Check if the current player has won
+        function checkWin() {
+            return winningCombinations.some(combination => {
+                return combination.every(index => cells[index].textContent === currentPlayer);
+            });
+        }
+
+        // Reset game
+        function resetGame() {
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.style.color = '#2b2b2b';
+            });
+            currentPlayer = 'X';
+            gameActive = true;
+            document.getElementById('message').textContent = '';
+        }
+
+        // Add event listeners
+        cells.forEach(cell => {
+            cell.addEventListener('click', handleClick);
+        });
+
+        // Add event listener for reset button
+        document.getElementById('resetButton').addEventListener('click', resetGame);
+    </script>
+</body>
+</html>
